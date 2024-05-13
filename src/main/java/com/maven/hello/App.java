@@ -3,28 +3,29 @@ package com.maven.hello;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class App {
     public static void main(String[] args) {
-        // Assuming the HTML and CSS files are in src/main/resources
+        // Path to the HTML file within the resources directory
+        String htmlFilePath = "/document.html";
+
+        // Base URL for resource loading (images, CSS, etc.)
         String baseUrl = App.class.getResource("/").toExternalForm();
 
-        String htmlContent = """
-            <html>
-                <head>
-                    <link rel="stylesheet" type="text/css" href="style.css"></link>
-                    <title>Test PDF</title>
-                </head>
-                <body>
-                    <h1>Hello, OpenHTMLtoPDF!</h1>
-                    <p>This is a PDF document generated from HTML with external CSS.</p>
-                </body>
-            </html>
-            """;
+        // Read HTML file from resources
+        String htmlContent;
+        try (InputStream is = App.class.getResourceAsStream(htmlFilePath)) {
+            htmlContent = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
 
         // Output file path
-        String outputPath = "output-css.pdf";
+        String outputPath = "output.pdf";
 
         // Convert HTML to PDF
         try (OutputStream os = new FileOutputStream(outputPath)) {
